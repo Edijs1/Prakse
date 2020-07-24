@@ -1,0 +1,76 @@
+ <?php
+  //  $mysqli = NEW MySQLi('localhost','root','', 'inventarizacija');
+  //  $resultSet = $mysqli->query("SELECT vards FROM darbinieki");
+    ?>
+
+   // <select name="darbinieki">
+    <?php
+  //  while ($rows = $resultSet->fetch_assoc())
+  //  {
+   //     $vards = $rows['vards'];
+    //    echo "<option value='$vards'>$vards</option>";
+   // }
+    ?>
+
+
+
+    <?php
+    $inventara_nr = $_POST['inventara_nr'];
+    $inventara_nos = $_POST['inventara_nos'];
+    $mervieniba = $_POST['mervieniba'];
+    $daudzums = $_POST['daudzums'];
+    $adrese_no = $_POST['adrese_no'];
+    $kabineta_nr = $_POST['kabineta_nr'];
+    $adrese_uz = $_POST['adrese_uz'];
+    $inventara_nr2 = $_POST['inventara_nr2'];
+
+    $host = "localhost";
+    $dbUsername = "root";
+    $dbPassword = "";
+    $dbname = "pavadzīmes";
+
+    $conn = new mysqli($host, $dbUsername, $dbPassword, $dbname);
+
+    $SELECT = "SELECT  inventara_nr from pavadzīmes where inventara_nr = ? Limit 1";
+    $INSERT = "INSERT into pavadzīmes(inventara_nr, inventara_nos, mervieniba, daudzums, adrese_no, kabineta_nr,
+adrese_uz, inventara_nr2) values (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($SELECT);
+    $stmt->bilnd_param("s", $inventara_nr);
+    $stmt->execute();
+    $stmt->store_result();
+    $rnum = $stmt->num_rows;
+
+    $stmt = $conn->prepare($INSERT);
+    $stmt->blind_param("aaaaa", $inventara_nr, $inventara_nos, $mervieniba, $daudzums, $adrese_no, $kabineta_nr,
+        $adrese_uz, $inventara_nr2);
+    $stmt->execute();
+    ?>
+
+  <script>
+        $.ajax({
+            type: "POST",
+            url: "http://inventars.local/tabulas/pavadzime",
+            data: {
+                inventara_nr:$('#invNr').val(),
+                inventara_nos:$('#invNos').val(),
+                mervieniba:$('#mervieniba').val(),
+                adrese_no:$('#adreseNo').val(),
+                kabineta_nr:$('#kabinetaNr').val(),
+                Adrese_uz:$('#adreseUz').val(),
+                kabineta_nr2:$('#kabinetaNr2').val(),
+
+            },
+            success: function (result) {
+                location.reload();
+                alert("Ieraksts pievienots");
+
+            },
+            error: function (response) {
+                var kautkas = JSON.stringify(response);
+                alert(kautkas);
+                alert('eror');
+
+            }
+        });
+    </script>
